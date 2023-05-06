@@ -6,7 +6,7 @@ var bodyParser = require("body-parser");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const routes = require('../app/routes');
+const routes = require('../api/routes');
 app.use('/', routes);
 
 module.exports = app;

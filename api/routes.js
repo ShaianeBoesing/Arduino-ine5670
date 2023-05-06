@@ -3,3 +3,5 @@ const arduino = require('./controllers/arduino_controller');
 
 // Login
 routes.get('/', arduino.index);
+
+module.exports = routes;

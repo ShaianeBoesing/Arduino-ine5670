@@ -4,10 +4,10 @@ const path = require('path')
 global.__basedir = __dirname;
 
 // conecting to server
-const app = require('./config/custom-express');
+const app = require('./config/express');
 
-app.listen(3000, () => {
-    console.log('Servidor rodando na porta 3000...')
+app.listen(80, () => {
+    console.log('Servidor rodando na porta 80...')
 });
 
 // conecting to db
