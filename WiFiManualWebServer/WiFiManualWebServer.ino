@@ -54,37 +54,6 @@ void loop() {
     String request = client.readStringUntil('\r');
     client.flush();
 
-    // Check if the request is for the root path ("/")
-   if (request.indexOf("GET /") != -1) {
-      // Send the HTML response with the message input form
-      client.println("HTTP/1.1 200 OK");
-      client.println("Content-Type: text/html");
-      client.println();
-      client.println("<html>");
-      client.println("<head>");
-      client.println("<title>Morse Code Transmitter</title>");
-      client.println("</head>");
-      client.println("<body>");
-      client.println("<h1>Morse Code Transmitter</h1>");
-      client.println("<form>");
-      client.println("Message: <input type='text' name='msg'><br>");
-      client.println("<input type='button' value='Send' onclick='sendMsg()'>");
-      client.println("</form>");
-      client.println("<script>");
-      client.println("function sendMsg() {");
-      client.println("  var msg = document.getElementsByName('msg')[0].value;");
-      client.println("  var xhr = new XMLHttpRequest();");
-      client.println("  xhr.open('GET', '/send?msg=' + encodeURIComponent(msg), true);");
-      client.println("  xhr.send();");
-      client.println("}");
-      client.println("</script>");
-      client.println("</body>");
-      client.println("</html>");
-
-      // Close the client connection
-      client.stop();
-   }
-
     // Check if the request is for the "/send" path
     if (request.indexOf("GET /send?msg=") != -1) {
       // Extract the message from the request
@@ -132,6 +101,31 @@ void loop() {
   
       
       analogWrite(LED_PIN, atoi(message.c_str()));
+      // Send the HTTP response
+      client.println("HTTP/1.1 200 OK");
+      client.println("Content-Type: text/plain");
+      client.println("Connection: close");
+      client.println();
+      client.println("OK");
+
+      // Close the client connection
+      client.stop();
+    }
+
+    if (request.indexOf("GET /switch=") != -1) {
+      // Extract the message from the request
+      int start = request.indexOf("switch=") + 7;
+      int end = request.indexOf(" HTTP");
+      message = request.substring(start, end);
+      Serial.println(message);
+      if (message == "on"){
+        digitalWrite(LED_PIN, HIGH);
+      }
+      else if(message=="off"){
+        digitalWrite(LED_PIN, LOW);
+      }
+  
+      
       // Send the HTTP response
       client.println("HTTP/1.1 200 OK");
       client.println("Content-Type: text/plain");
