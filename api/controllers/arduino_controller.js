@@ -4,7 +4,7 @@ exports.index = function(req, res) {
     res.send("Hello world");
 };
 
-exports.changeIntensity = function(req, res) {
+exports.writeIntensity = function(req, res) {
     const arduinoIP = '192.168.3.193';
     const arduinoPort = 80;
   
@@ -19,7 +19,25 @@ exports.changeIntensity = function(req, res) {
     } else {
       res.status(400).send('A intensidade deve ser um valor entre 0 e 255.');
     }
-  };
+};
+
+exports.writeMorse = function(req, res) {
+    const arduinoIP = '192.168.3.193';
+    const arduinoPort = 80;
+
+    const morse = req.params.morse;
+
+    const mensagem = `${morse}\n`;
+
+    const regex = /^[a-zA-Z0-9]+$/;
+
+    if (regex.test(morse)) {
+        arduinoConnect(arduinoIP, arduinoPort, mensagem);
+        res.send(`Mensagem enviada para escrever em morse ${morse}.`);
+    } else {
+        res.status(400).send('A mensagem deve conter apenas letras e números.');
+    }
+};
 
 function arduinoConnect(arduinoIP, arduinoPort, mensagem) {
     const arduinoSocket = net.connect({ host: arduinoIP, port: arduinoPort }, () => {
@@ -39,6 +57,6 @@ function arduinoConnect(arduinoIP, arduinoPort, mensagem) {
     arduinoSocket.on('error', (error) => {
       console.error(`Erro ao conectar com o Arduino: ${error}`);
     });
-  }
+}
   
   
