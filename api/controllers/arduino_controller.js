@@ -34,6 +34,32 @@ exports.writeMorse = function(req, res) {
     }
 };
 
+exports.changeState = function(req, res) {
+
+    const state = req.params.state;
+
+    const mensagem = `${state}\n`;
+
+    const regex = /^(on|off)$/;
+
+    if (regex.test(state)) {
+        arduinoConnect(req, mensagem);
+        res.send(`Mensagem enviada para mudar o estado do led para ${state}.`);
+    } else {
+        res.status(400).send('A mensagem deve conter apenas "on" ou "off".');
+    }
+};
+
+function reqType(req) {
+    const mapping = {
+        morse: 'morse',
+        intensity: 'intensity',
+        state: 'state'
+    };
+    const value = Object.keys(req.params).find(value => mapping[value]);
+    return mapping[value];
+}
+
 function arduinoConnect(req, value) {
     const arduinoIP = '192.168.3.193';
     const arduinoPort = 80;
@@ -57,12 +83,3 @@ function arduinoConnect(req, value) {
     });
 }
 
-function reqType(req) {
-    const mapping = {
-        morse: 'morse',
-        intensity: 'intensity',
-        switch: 'switch'
-    };
-    const value = Object.keys(req.params).find(value => mapping[value]);
-    return mapping[value];
-}
