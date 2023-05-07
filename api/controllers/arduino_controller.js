@@ -5,15 +5,12 @@ exports.index = function(req, res) {
 };
 
 exports.writeIntensity = function(req, res) {
-    const arduinoIP = '192.168.3.193';
-    const arduinoPort = 80;
-  
     const intensity = req.params.intensity;
   
     if (intensity >= 0 && intensity <= 255) {
       const mensagem = `${intensity}\n`;
   
-      arduinoConnect(arduinoIP, arduinoPort, mensagem);
+      arduinoConnect(req, mensagem);
   
       res.send(`Mensagem enviada para alterar a intensidade do LED para ${intensity}.`);
     } else {
@@ -22,30 +19,32 @@ exports.writeIntensity = function(req, res) {
 };
 
 exports.writeMorse = function(req, res) {
-    const arduinoIP = '192.168.3.193';
-    const arduinoPort = 80;
 
     const morse = req.params.morse;
 
     const mensagem = `${morse}\n`;
 
-    const regex = /^[a-zA-Z0-9]+$/;
+    const regex = /^[a-zA-Z]+$/;
 
     if (regex.test(morse)) {
-        arduinoConnect(arduinoIP, arduinoPort, mensagem);
+        arduinoConnect(req, mensagem);
         res.send(`Mensagem enviada para escrever em morse ${morse}.`);
     } else {
         res.status(400).send('A mensagem deve conter apenas letras e números.');
     }
 };
 
-function arduinoConnect(arduinoIP, arduinoPort, intensity) {
+function arduinoConnect(req, value) {
+    const arduinoIP = '192.168.3.193';
+    const arduinoPort = 80;
+
     const arduinoSocket = net.connect({ host: arduinoIP, port: arduinoPort }, () => {
         console.log('Conexão estabelecida com o Arduino!');
     });
+    console.log(`GET /${reqType(req)}=${value} HTTP/1.1\r\n\r\n`)
 
     arduinoSocket.on('connect', () => {
-        arduinoSocket.write(`GET /intensity=${intensity} HTTP/1.1\r\n\r\n`);
+        arduinoSocket.write(`GET /${reqType(req)}=${value} HTTP/1.1\r\n\r\n`);
         arduinoSocket.end();
     });
 
@@ -56,4 +55,14 @@ function arduinoConnect(arduinoIP, arduinoPort, intensity) {
     arduinoSocket.on('error', (error) => {
         console.error(`Erro ao conectar com o Arduino: ${error}`);
     });
+}
+
+function reqType(req) {
+    const mapping = {
+        morse: 'morse',
+        intensity: 'intensity',
+        switch: 'switch'
+    };
+    const value = Object.keys(req.params).find(value => mapping[value]);
+    return mapping[value];
 }
