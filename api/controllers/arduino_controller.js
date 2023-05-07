@@ -39,24 +39,21 @@ exports.writeMorse = function(req, res) {
     }
 };
 
-function arduinoConnect(arduinoIP, arduinoPort, mensagem) {
+function arduinoConnect(arduinoIP, arduinoPort, intensity) {
     const arduinoSocket = net.connect({ host: arduinoIP, port: arduinoPort }, () => {
-      console.log('Conexão estabelecida com o Arduino!');
+        console.log('Conexão estabelecida com o Arduino!');
     });
-  
+
     arduinoSocket.on('connect', () => {
-      arduinoSocket.write(mensagem);
-  
-      arduinoSocket.end();
+        arduinoSocket.write(`GET /intensity=${intensity} HTTP/1.1\r\n\r\n`);
+        arduinoSocket.end();
     });
-  
+
     arduinoSocket.on('data', (data) => {
-      console.log(`Mensagem recebida do Arduino: ${data}`);
+        console.log(`Mensagem recebida do Arduino: ${data}`);
     });
-  
+
     arduinoSocket.on('error', (error) => {
-      console.error(`Erro ao conectar com o Arduino: ${error}`);
+        console.error(`Erro ao conectar com o Arduino: ${error}`);
     });
 }
-  
-  
