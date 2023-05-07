@@ -55,9 +55,9 @@ void loop() {
     client.flush();
 
     // Check if the request is for the "/send" path
-    if (request.indexOf("GET /send?msg=") != -1) {
+    if (request.indexOf("GET /morse=") != -1) {
       // Extract the message from the request
-      int start = request.indexOf("msg=") + 4;
+      int start = request.indexOf("morse=") + 6;
       int end = request.indexOf(" HTTP");
       message = request.substring(start, end);
       message.trim();
@@ -75,10 +75,11 @@ void loop() {
             } else if (m == '-') {
               blink(3);
             }
-            delay(100);
+            delay(50);
           }
-          delay(200);
+          delay(100);
         }
+        delay(200);
       }
 
       // Send the HTTP response
@@ -112,9 +113,9 @@ void loop() {
       client.stop();
     }
 
-    if (request.indexOf("GET /switch=") != -1) {
+    if (request.indexOf("GET /state=") != -1) {
       // Extract the message from the request
-      int start = request.indexOf("switch=") + 7;
+      int start = request.indexOf("state=") + 6;
       int end = request.indexOf(" HTTP");
       message = request.substring(start, end);
       Serial.println(message);

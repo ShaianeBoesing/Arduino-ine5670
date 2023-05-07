@@ -8,7 +8,7 @@ exports.writeIntensity = function(req, res) {
     const intensity = req.params.intensity;
   
     if (intensity >= 0 && intensity <= 255) {
-      const mensagem = `${intensity}\n`;
+      const mensagem = `${intensity}`;
   
       arduinoConnect(req, mensagem);
   
@@ -22,7 +22,7 @@ exports.writeMorse = function(req, res) {
 
     const morse = req.params.morse;
 
-    const mensagem = `${morse}\n`;
+    const mensagem = `${morse}`;
 
     const regex = /^[a-zA-Z]+$/;
 
@@ -38,7 +38,7 @@ exports.changeState = function(req, res) {
 
     const state = req.params.state;
 
-    const mensagem = `${state}\n`;
+    const mensagem = `${state}`;
 
     const regex = /^(on|off)$/;
 
