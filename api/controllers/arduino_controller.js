@@ -1,3 +1,6 @@
+const ArduinoHistory = require('../models/ArduinoHistory');
+const ConnectionTypes = require('../models/ConnectionTypes');
+
 const net = require('net');
 
 exports.index = function(req, res) {
@@ -5,8 +8,8 @@ exports.index = function(req, res) {
 };
 
 exports.writeIntensity = function(req, res) {
-    const intensity = req.params.intensity;
-  
+    const intensity = req.params.INTENSITY;
+
     if (intensity >= 0 && intensity <= 255) {
       const mensagem = `${intensity}`;
   
@@ -20,7 +23,7 @@ exports.writeIntensity = function(req, res) {
 
 exports.writeMorse = function(req, res) {
 
-    const morse = req.params.morse;
+    const morse = req.params.MORSE;
 
     const mensagem = `${morse}`;
 
@@ -34,43 +37,43 @@ exports.writeMorse = function(req, res) {
     }
 };
 
-exports.changeState = function(req, res) {
+exports.setState = function(req, res) {
 
-    const state = req.params.state;
+    const setState = req.params.SET_STATE;
 
-    const mensagem = `${state}`;
+    const mensagem = `${setState}`;
 
     const regex = /^(on|off)$/;
 
-    if (regex.test(state)) {
+    if (regex.test(setState)) {
         arduinoConnect(req, mensagem);
-        res.send(`Mensagem enviada para mudar o estado do led para ${state}.`);
+        res.send(`Mensagem enviada para mudar o estado do led para ${setState}.`);
     } else {
         res.status(400).send('A mensagem deve conter apenas "on" ou "off".');
     }
 };
 
+exports.getState = function(req, res) {
+    return true
+};
+
 function reqType(req) {
-    const mapping = {
-        morse: 'morse',
-        intensity: 'intensity',
-        state: 'state'
-    };
-    const value = Object.keys(req.params).find(value => mapping[value]);
-    return mapping[value];
+    return ConnectionTypes[Object.keys(req.params)[0]]
 }
 
 function arduinoConnect(req, value) {
     const arduinoIP = '192.168.3.193';
     const arduinoPort = 80;
+    let type = reqType(req)
 
     const arduinoSocket = net.connect({ host: arduinoIP, port: arduinoPort }, () => {
         console.log('Conexão estabelecida com o Arduino!');
     });
-    console.log(`GET /${reqType(req)}=${value} HTTP/1.1\r\n\r\n`)
 
+    ArduinoHistory.create({"type": type, "value": value})
+    
     arduinoSocket.on('connect', () => {
-        arduinoSocket.write(`GET /${reqType(req)}=${value} HTTP/1.1\r\n\r\n`);
+        arduinoSocket.write(`GET /${type}=${value} HTTP/1.1\r\n\r\n`);
         arduinoSocket.end();
     });
 

@@ -1,10 +1,10 @@
 const routes = require('express').Router();
 const arduino = require('./controllers/arduino_controller');
 
-// Login
 routes.get('/', arduino.index);
-routes.get('/intensity/:intensity', arduino.writeIntensity);
-routes.get('/morse/:morse', arduino.writeMorse);
-routes.get('/state/:state', arduino.changeState);
+routes.get('/intensity/:INTENSITY', arduino.writeIntensity);
+routes.get('/morse/:MORSE', arduino.writeMorse);
+routes.get('/setState/:SET_STATE', arduino.setState);
+routes.get('/getState/:GET_STATE', arduino.getState);
 
 module.exports = routes;
