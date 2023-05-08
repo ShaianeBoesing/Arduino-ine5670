@@ -91,7 +91,8 @@ exports.history = async function (req, res) {
 
 function arduinoConnect(req, value = null, callback) {
     return new Promise((resolve, reject) => {
-        const arduinoIP = "192.168.3.193";
+        // const arduinoIP = "192.168.3.193";
+        const arduinoIP = "172.20.10.6";
         const arduinoPort = 80;
         let type = reqType(req);
 

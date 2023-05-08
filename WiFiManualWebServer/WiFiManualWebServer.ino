@@ -6,8 +6,8 @@
 #include <stdlib.h>
 
 // Replace with your network credentials
-const char* ssid = "FL Wireless 2.4";
-const char* password = "FernandoNet";
+const char* ssid = "Matheus Ed.";
+const char* password = "lucas123";
 
 // Set the LED pin
 const int LED_PIN = D2;
@@ -94,7 +94,7 @@ void loop() {
       client.println("OK");
 
       // Close the client connection
-      client.stop();
+      // client.stop();
     }
 
     if (request.indexOf("GET /intensity=") != -1) {
@@ -135,7 +135,7 @@ void loop() {
       client.println("OK");
 
       // Close the client connection
-      client.stop();
+      // client.stop();
     }
 
     if (request.indexOf("GET /getState") != -1) {
