@@ -11,14 +11,13 @@ exports.writeIntensity = async function (req, res) {
 
     if (intensity >= 0 && intensity <= 255) {
         const mensagem = `${intensity}`;
-
         try {
             await arduinoConnect(req, mensagem);
+            res.send(`Mensagem enviada para alterar a intensidade do LED para ${intensity}.`);
         } catch (error) {
             console.log(error)
+            res.status(500).send(ArduinoConnectioneError);
         }
-
-        res.send(`Mensagem enviada para alterar a intensidade do LED para ${intensity}.`);
     } else {
         res.status(400).send('A intensidade deve ser um valor entre 0 e 255.');
     }
@@ -35,12 +34,13 @@ exports.writeMorse = async function (req, res) {
     if (regex.test(morse)) {
         try {
             await arduinoConnect(req, mensagem);
+            res.send(`Mensagem enviada para escrever em morse ${morse}.`);
         } catch (error) {
             console.log(error)
+            res.status(500).send(ArduinoConnectioneError);
         }
-        res.send(`Mensagem enviada para escrever em morse ${morse}.`);
     } else {
-        res.status(400).send('A mensagem deve conter apenas letras e números.');
+        res.status(400).send('A mensagem deve conter apenas letras.');
     }
 };
 
@@ -55,10 +55,11 @@ exports.setState = async function (req, res) {
     if (regex.test(setState)) {
         try {
             await arduinoConnect(req, mensagem);
+            res.send(`Mensagem enviada para mudar o estado do led para ${setState}.`);
         } catch (error) {
             console.log(error)
+            res.status(500).send(ArduinoConnectioneError);
         }
-        res.send(`Mensagem enviada para mudar o estado do led para ${setState}.`);
     } else {
         res.status(400).send('A mensagem deve conter apenas "on" ou "off".');
     }
@@ -72,24 +73,20 @@ exports.getState = async function (req, res) {
         }
     } catch (error) {
         console.log(error)
-        res.status(500).send(`Ocorreu um erro ao se comunicar com o Arduino`);
+        res.status(500).send(ArduinoConnectioneError);
     }
 };
 
 exports.history = async function (req, res) {
     ArduinoHistory.find({}, { type: 1, value: 1, createdAt: 1, _id: 0 })
-        .sort({ createdAt: -1 })
-        .then((results) => {
-            res.send(results);
-        })
-        .catch((error) => {
-            console.log(`Erro ao buscar histórico do Arduino`);
-            console.log(error);
-        });
-}
-
-function reqType(req) {
-    return req.originalUrl.split('/')[1];
+    .sort({ createdAt: -1 })
+    .then((results) => {
+        res.send(results);
+    })
+    .catch((error) => {
+        console.log(error);
+        res.status(500).send(DatabaseConnectionError);
+    });
 }
 
 function arduinoConnect(req, value = null, callback) {
@@ -128,3 +125,14 @@ function arduinoConnect(req, value = null, callback) {
     });
 }
 
+function reqType(req) {
+    return req.originalUrl.split('/')[1];
+}
+
+function ArduinoConnectioneError() {
+    return "Ocorreu um erro ao comunicar com o Arduino"
+}
+
+function DatabaseConnectionError() {
+    return "Ocorreu um erro ao comunicar com o Banco de Dados"
+}
