@@ -54,7 +54,14 @@ exports.setState = function(req, res) {
 };
 
 exports.getState = function(req, res) {
-    return true
+    arduinoConnect(req, null, (error, data) => {
+        if (error) {
+            console.error(error);
+            res.status(500).send(`Ocorreu um erro ao se comunicar com o Arduino: ${error}`);
+        } else {
+            res.send(`O led está ${data}.`);
+        }
+    });
 };
 
 exports.history = async function(req, res) {
@@ -72,7 +79,7 @@ function reqType(req) {
     return ConnectionTypes[Object.keys(req.params)[0]]
 }
 
-function arduinoConnect(req, value) {
+function arduinoConnect(req, value=null, callback) {
     const arduinoIP = '192.168.3.193';
     const arduinoPort = 80;
     let type = reqType(req)
@@ -81,12 +88,17 @@ function arduinoConnect(req, value) {
         console.log('Conexão estabelecida com o Arduino!');
     });
 
-    ArduinoHistory.create({"type": type, "value": value})
 
     let receivedData = '';
 
     arduinoSocket.on('connect', () => {
-        arduinoSocket.write(`GET /${type}=${value} HTTP/1.1\r\n\r\n`);
+        let url = `GET /${type}`;
+        if (value) {
+            url = url.concat(`=${value}`);
+        }
+        url = url.concat(' HTTP/1.1\r\n\r\n');
+        document.write(url)
+        arduinoSocket.write(url);
     });
 
     arduinoSocket.on('data', (data) => {
@@ -96,10 +108,13 @@ function arduinoConnect(req, value) {
     arduinoSocket.on('end', () => {
         console.log('Conexão finalizada com o Arduino.');
         console.log(`Dados recebidos: ${receivedData}`);
+        ArduinoHistory.create({"type": type, "value": value})
+        callback(null, receivedData);
     });
 
     arduinoSocket.on('error', (error) => {
         console.error(`Erro ao conectar com o Arduino: ${error}`);
+        callback(error, null);
     });
 }
 
