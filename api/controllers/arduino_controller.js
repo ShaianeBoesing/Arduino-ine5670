@@ -16,7 +16,7 @@ exports.writeIntensity = async function (req, res) {
             res.send(`Mensagem enviada para alterar a intensidade do LED para ${intensity}.`);
         } catch (error) {
             console.log(error)
-            res.status(500).send(ArduinoConnectioneError);
+            res.status(500).send(ArduinoConnectionError());
         }
     } else {
         res.status(400).send('A intensidade deve ser um valor entre 0 e 255.');
@@ -37,7 +37,7 @@ exports.writeMorse = async function (req, res) {
             res.send(`Mensagem enviada para escrever em morse ${morse}.`);
         } catch (error) {
             console.log(error)
-            res.status(500).send(ArduinoConnectioneError);
+            res.status(500).send(ArduinoConnectionError());
         }
     } else {
         res.status(400).send('A mensagem deve conter apenas letras.');
@@ -58,7 +58,7 @@ exports.setState = async function (req, res) {
             res.send(`Mensagem enviada para mudar o estado do led para ${setState}.`);
         } catch (error) {
             console.log(error)
-            res.status(500).send(ArduinoConnectioneError);
+            res.status(500).send(ArduinoConnectionError());
         }
     } else {
         res.status(400).send('A mensagem deve conter apenas "on" ou "off".');
@@ -73,7 +73,7 @@ exports.getState = async function (req, res) {
         }
     } catch (error) {
         console.log(error)
-        res.status(500).send(ArduinoConnectioneError);
+        res.status(500).send(ArduinoConnectionError());
     }
 };
 
@@ -85,7 +85,7 @@ exports.history = async function (req, res) {
     })
     .catch((error) => {
         console.log(error);
-        res.status(500).send(DatabaseConnectionError);
+        res.status(500).send(DatabaseConnectionError());
     });
 }
 
@@ -129,7 +129,7 @@ function reqType(req) {
     return req.originalUrl.split('/')[1];
 }
 
-function ArduinoConnectioneError() {
+function ArduinoConnectionError() {
     return "Ocorreu um erro ao comunicar com o Arduino"
 }
 
