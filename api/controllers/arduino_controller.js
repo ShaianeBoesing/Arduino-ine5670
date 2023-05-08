@@ -71,14 +71,20 @@ function arduinoConnect(req, value) {
     });
 
     ArduinoHistory.create({"type": type, "value": value})
-    
+
+    let receivedData = '';
+
     arduinoSocket.on('connect', () => {
         arduinoSocket.write(`GET /${type}=${value} HTTP/1.1\r\n\r\n`);
-        arduinoSocket.end();
     });
 
     arduinoSocket.on('data', (data) => {
-        console.log(`Mensagem recebida do Arduino: ${data}`);
+        receivedData += data.toString();
+    });
+
+    arduinoSocket.on('end', () => {
+        console.log('Conexão finalizada com o Arduino.');
+        console.log(`Dados recebidos: ${receivedData}`);
     });
 
     arduinoSocket.on('error', (error) => {
