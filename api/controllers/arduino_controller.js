@@ -1,5 +1,4 @@
 const ArduinoHistory = require('../models/ArduinoHistory');
-const ConnectionTypes = require('../models/ConnectionTypes');
 
 const net = require('net');
 
@@ -67,7 +66,7 @@ exports.setState = async function (req, res) {
 
 exports.getState = async function (req, res) {
     try {
-        result = await arduinoConnect(req, mensagem);
+        result = await arduinoConnect(req);
         if (result.hasOwnProperty('data')) {
             res.send(`O led está ${result['data']}.`);
         }
@@ -89,7 +88,7 @@ exports.history = async function (req, res) {
 }
 
 function reqType(req) {
-    return ConnectionTypes[Object.keys(req.params)[0]]
+    return req.originalUrl.split('/')[1];
 }
 
 function arduinoConnect(req, value = null, callback) {
