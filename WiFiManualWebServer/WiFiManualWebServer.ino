@@ -110,9 +110,9 @@ void loop() {
       // Close the client connection
     }
 
-    if (request.indexOf("GET /state=") != -1) {
+    if (request.indexOf("GET /setState=") != -1) {
       // Extract the message from the request
-      int start = request.indexOf("state=") + 6;
+      int start = request.indexOf("State=") + 6;
       int end = request.indexOf(" HTTP");
       message = request.substring(start, end);
       Serial.println(message);
@@ -135,12 +135,16 @@ void loop() {
       client.stop();
     }
 
-    if (request.indexOf("GET /state=check") != -1) {
+    if (request.indexOf("GET /getState") != -1) {
       // Extract the message from the request
 
       // Send the HTTP response
-      client.print(digitalRead(LED_PIN));
-
+       // Send the HTTP response
+      client.println("HTTP/1.1 200 OK");
+      client.println("Content-Type: text/plain");
+      client.println("Connection: close");
+      client.println();
+      client.println("OK");
       // Close the client connection
       client.stop();
     }
