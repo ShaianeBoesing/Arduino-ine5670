@@ -83,7 +83,8 @@ exports.history = async function (req, res) {
             res.send(results);
         })
         .catch((error) => {
-            console.log(`Erro ao buscar histórico do Arduino: ${error}`);
+            console.log(`Erro ao buscar histórico do Arduino`);
+            console.log(error);
         });
 }
 
