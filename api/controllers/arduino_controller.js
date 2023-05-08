@@ -57,6 +57,17 @@ exports.getState = function(req, res) {
     return true
 };
 
+exports.history = async function(req, res) {
+    ArduinoHistory.find({}, {type: 1, value: 1, createdAt: 1, _id: 0})
+    .sort({createdAt: -1})
+    .then((results) => {
+        res.send(results);
+    })
+    .catch((error) => {
+        console.log(`Erro ao buscar histórico do Arduino: ${error}`);
+    });
+}
+
 function reqType(req) {
     return ConnectionTypes[Object.keys(req.params)[0]]
 }
