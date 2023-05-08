@@ -67,12 +67,7 @@ exports.setState = async function (req, res) {
 
 exports.getState = async function (req, res) {
     try {
-        try {
-            await arduinoConnect(req, mensagem);
-        } catch (error) {
-            console.log(error)
-        }
-
+        result = await arduinoConnect(req, mensagem);
         if (result.hasOwnProperty('data')) {
             res.send(`O led está ${result['data']}.`);
         }
