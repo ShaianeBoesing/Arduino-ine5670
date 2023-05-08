@@ -49,6 +49,7 @@ void setup() {
 void loop() {
   // Wait for a client to connect to the server
   client = server.available();
+
   if (client) {
     // Read the HTTP request
     String request = client.readStringUntil('\r');
@@ -61,6 +62,8 @@ void loop() {
       int end = request.indexOf(" HTTP");
       message = request.substring(start, end);
       message.trim();
+      analogWrite(LED_PIN, 0);
+      delay(2000);      
 
       // Translate the message to Morse code and blink the LED accordingly
             // Translate the message to Morse code and blink the LED accordingly
@@ -103,14 +106,8 @@ void loop() {
       
       analogWrite(LED_PIN, atoi(message.c_str()));
       // Send the HTTP response
-      client.println("HTTP/1.1 200 OK");
-      client.println("Content-Type: text/plain");
-      client.println("Connection: close");
-      client.println();
-      client.println("OK");
-
+      client.print("TESTE");
       // Close the client connection
-      client.stop();
     }
 
     if (request.indexOf("GET /state=") != -1) {
@@ -133,6 +130,16 @@ void loop() {
       client.println("Connection: close");
       client.println();
       client.println("OK");
+
+      // Close the client connection
+      client.stop();
+    }
+
+    if (request.indexOf("GET /state=check") != -1) {
+      // Extract the message from the request
+
+      // Send the HTTP response
+      client.print(digitalRead(LED_PIN));
 
       // Close the client connection
       client.stop();
