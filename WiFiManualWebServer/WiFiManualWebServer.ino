@@ -11,6 +11,7 @@ const char* password = "FernandoNet";
 
 // Set the LED pin
 const int LED_PIN = D2;
+int intensidade = 0;
 
 // Define the Morse code translation table
 const char* MORSE_TABLE[] = {
@@ -105,6 +106,7 @@ void loop() {
   
       
       analogWrite(LED_PIN, atoi(message.c_str()));
+      intensidade = atoi(message.c_str());
       // Send the HTTP response
       client.print("TESTE");
       // Close the client connection
@@ -121,6 +123,7 @@ void loop() {
       }
       else if(message=="off"){
         digitalWrite(LED_PIN, LOW);
+        intensidade = 0;
       }
   
       
@@ -140,13 +143,17 @@ void loop() {
 
       // Send the HTTP response
        // Send the HTTP response
-      client.println("HTTP/1.1 200 OK");
-      client.println("Content-Type: text/plain");
-      client.println("Connection: close");
-      client.println();
-      client.println("OK");
+       Serial.println(intensidade);
+      if (intensidade>0){
+        float valor = (float)intensidade / 255.0f;
+        Serial.println(valor);
+        Serial.println(intensidade);
+        client.printf("ligado em %.2f%% de instensidade",valor * 100.0f);
+      }else{
+        client.print("desligado");
+      }
       // Close the client connection
-      client.stop();
+      // client.stop();
     }
   }
 }
