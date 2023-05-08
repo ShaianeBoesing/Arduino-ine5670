@@ -139,8 +139,12 @@ void loop() {
       // Extract the message from the request
 
       // Send the HTTP response
-      client.print(digitalRead(LED_PIN));
-
+       // Send the HTTP response
+      client.println("HTTP/1.1 200 OK");
+      client.println("Content-Type: text/plain");
+      client.println("Connection: close");
+      client.println();
+      client.println("OK");
       // Close the client connection
       client.stop();
     }
