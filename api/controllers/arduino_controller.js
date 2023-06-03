@@ -29,11 +29,11 @@ exports.writeMorse = async function (req, res) {
 
     const mensagem = `${morse}`;
 
-    const regex = /^[a-zA-Z]+$/;
+    const regex = /^[a-zA-Z\s]+$/;
 
     if (regex.test(morse)) {
         try {
-            await arduinoConnect(req, mensagem);
+            await arduinoConnect(req, mensagem.replace(" ", "%20"));
             res.send(`Mensagem enviada para escrever em morse ${morse}.`);
         } catch (error) {
             console.log(error)
@@ -81,7 +81,7 @@ exports.history = async function (req, res) {
     ArduinoHistory.find({}, { type: 1, value: 1, createdAt: 1, _id: 0 })
     .sort({ createdAt: -1 })
     .then((results) => {
-        res.send(results);
+        res.json(results);
     })
     .catch((error) => {
         console.log(error);
